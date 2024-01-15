@@ -20,7 +20,7 @@ const useAnalyzer = (setSpectroOpacities: Dispatch<SetStateAction<number[]>>) =>
         })()
     })
 
-    return useCallback(() => {
+    const loop = useCallback(() => {
         analyserNodeRef.current!.getByteFrequencyData(dataArrayRef.current!)
         const maxidx = dataArrayRef.current!.findIndex(v => v === Math.max(...dataArrayRef.current!))!
 
@@ -28,6 +28,8 @@ const useAnalyzer = (setSpectroOpacities: Dispatch<SetStateAction<number[]>>) =>
             dataArrayRef.current![maxidx * (index+1)] / 255
         )))
     }, [setSpectroOpacities])
+
+    return {loop, audioContextRef}
 }
 
 export default useAnalyzer

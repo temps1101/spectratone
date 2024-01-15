@@ -8,9 +8,8 @@ const Home = () => {
     const [spectroOpacitiesTemp, setSpectroOpacitiesTemp] = useState<number[]>(Array(12).fill(0))
     const [isRunning, setIsRunning] = useState<boolean>(false)
 
-
-    const callback = useAnalyzer(setSpectroOpacities)
-    useAnimationFrame(isRunning, callback)
+    const {loop, audioContextRef} = useAnalyzer(setSpectroOpacities)
+    useAnimationFrame(isRunning, loop)
 
     return (
         <main className="p-1 w-screen h-screen grid grid-cols-11 gap-1">
@@ -30,7 +29,14 @@ const Home = () => {
                 <h1 className="row-span-6 text-2xl text-indigo-900 sm:text-5xl flex items-center justify-center [writing-mode:vertical-lr]">
                     &quot;spectratone&quot;
                 </h1>
-                <button className="row-span-3 text-2xl font-bold flex items-center justify-center [writing-mode:vertical-lr]" onClick={() => setIsRunning(!isRunning)}>
+                <button className="row-span-3 text-2xl font-bold flex items-center justify-center [writing-mode:vertical-lr]"
+                        onClick={async () => {
+                            setIsRunning(!isRunning)
+                            if (audioContextRef.current?.state === "suspended") {
+                                await audioContextRef.current?.resume()
+                            }
+                        }}
+                >
                     {isRunning ? "stop" : "start"}
                 </button>
                 <button className="row-span-3 text-2xl font-bold flex items-center justify-center [writing-mode:vertical-lr]" onClick={() => setSpectroOpacitiesTemp(spectroOpacities)}>
